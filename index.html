@@ -1,170 +1,164 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
 	<meta charset="utf-8">
-	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<title>Miniprovistor: 1-click deployment of OpenBazaar</title>
-	<link rel="icon" type="image/png" href="assets/images/favicon.png" />
-
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+	<!-- JQuery -->
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
 	<!-- Latest compiled and minified CSS -->
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
-
+	<!-- Optional theme -->
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+	<!-- Latest compiled and minified JavaScript -->
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
 	<!-- Custom styles for this template -->
-	<link href="assets/css/theme.css" rel="stylesheet">
+	<link href="https://getbootstrap.com/examples/starter-template/starter-template.css" rel="stylesheet">
 </head>
 <body>
-	<nav class="navbar navbar-inverse navbar-fixed-top">
-	  <div class="container">
-	    <div class="navbar-header">
-	      <a class="navbar-brand" href="#">Miniprovistor</a>
-	    </div>
-	    <div id="navbar" class="collapse navbar-collapse">
-	      <ul class="nav navbar-nav">
-	        <li class="active"><a href="#">Home</a></li>
-	        <li><a href="https://openbazaar.org/?ref=miniprovistor" target="_blank">Get OpenBazaar</a></li>
-	      </ul>
-	    </div>
-	  </div>
-	</nav>
 
-	<div class="container">
-	  <div class="header">
-	    <h1>Miniprovistor</h1>
-	    <p class="lead">1-click deployment of OpenBazaar on a Digital Ocean droplet</p>
-	  </div>
-		<p style="font-size:18px">
-			To get started, all you need to do is sign-up to Digital Ocean, which is an awesome cloud hosting service! <a href="https://m.do.co/c/eaa306f7dd3d">Join using this link</a> for $10 free credit, which is about 2 months of free time running OpenBazaar using the smallest droplet (i.e. 512 MB). After you've joined, create an API token as shown in the GIF below.
-		</p>
+<nav class="navbar navbar-inverse navbar-fixed-top">
+      <div class="container">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="#">Miniprovistor</a>
+        </div>
+        <div id="navbar" class="collapse navbar-collapse">
+          <ul class="nav navbar-nav">
+            <li class="active"><a href="#">Home</a></li>
+            <li><a href="https://openbazaar.org" target="_blank">Get OpenBazaar</a></li>
+            <!-- <li><a href="#contact">Contact</a></li> -->
+          </ul>
+        </div><!--/.nav-collapse -->
+      </div>
+    </nav>
+
+    <div class="container">
+
+      <div class="starter-template">
+        <h1>Miniprovistor</h1>
+        <p class="lead">Deploy a Digital Ocean virtual private server and install OpenBazaar hassle free!<br> Manage your OpenBazaar node easily once it's provisioned.</p>
+      </div>
+
+      <div>
+		<h2>Start Here</h2>
+
+		<h4>Test Access to the VPS</h4>
+		<input id="password" placeholder="Enter your password" required></br></br>
+		<form id="test" method="post" action="http://localhost:8080/api/v1/test" target="_blank" onclick="sendpassword()">
+				<input id="test_password" name="password" value="" hidden>
+		    <input type="submit" class="btn btn-info btn-lg" value="Test">
+		</form>
+		</br>
+		<div class="well well-lg"><p id="dasinfo"></p></div>
+
+<script>
+
+</script>
+
+		<hr>
+
+		<h2> OpenBazaar Server Controls</h2><br>
+		<!-- <h4>Run OpenBazaar</h4> -->
+		<form id="runob" method="post" action="http://localhost:8080/api/v1/runob" onclick="sendpassword()" target="_blank">
+				<input id="runob_password" name="password" value="" hidden>
+		    <input type="submit" class="btn btn-success btn-lg" value="Start">
+		</form>
 		<br>
-		<img src="assets/images/token_instructions.gif" class="img-responsive center-block">
+		<!-- <h4>Stop OpenBazaar</h4> -->
+		<form id="stopob" method="post" action="http://localhost:8080/api/v1/stopob" onclick="sendpassword()" target="_blank">
+				<input id="stopob_password" name="password" value="" hidden>
+		    <input type="submit" class="btn btn-danger btn-lg" value="Stop">
+		</form>
 		<br>
-		<p style="font-size:18px">The <code>miniprovistor</code> server <u>never</u> sees your Digital Ocean API token (check the source if you don't believe me). However, any node that you create using <code>miniprovistor</code> will be temporarily root-accessible to the server. After installation, root access is automatically removed.</p><br>
-
-		<!-- VPS Creation Form -->
-		<form>
-			<h3>Digital Ocean API Token</h3>
-			<div class="input-group input-group-lg">
-				<span class="input-group-addon" id="sizing-addon1">Token:</span>
-				<input class="form-control" aria-describedby="sizing-addon1" type="text" id="token" name="token" placeholder="e.g. abcdefg123456789868ac60920f00152840475b63607d543ce89d3d42b66bc6a">
-			</div>
-			</br>
-			<div class="row">
-				<div class="col-md-2"><h4>Droplet Size</h4></div>
-				<div class="col-md-2">
-					<select class="form-control" id="size">
-					  <option name="size" value="512mb">512 MB; $5/month</option>
-					  <option name="size" value="1gb">1 GB; $10/month</option>
-					  <option name="size" value="2gb">2 GB; $20/month</option>
-					</select>
-				</div>
-				<div class="col-md-8"></div>
-			</div>
-			</br>
-			<div class="row">
-				<div class="col-md-2"><h4>Droplet Region</h4></div>
-				<div class="col-md-2">
-					<select class="form-control" id="region">
-					  <option name="region" value="nyc1">New York 1</option>
-					  <option name="region" value="nyc2">New York 2</option>
-					  <option name="region" value="nyc3">New York 3</option>
-					  <option name="region" value="sfo1">San Francisco 1</option>
-					  <option name="region" value="sfo2">San Francisco 2</option>
-					  <option name="region" value="ams2">Amsterdam 2</option>
-					  <option name="region" value="ams3">Amsterdam 3</option>
-					  <option name="region" value="sgp1">Singapore</option>
-					  <option name="region" value="lon1">London</option>
-					  <option name="region" value="fra1">Frankfurt</option>
-					  <option name="region" value="tor1">Toronto</option>
-					  <option name="region" value="blr1">Bangalore</option>
-					</select>
-				</div>
-				<div class="col-md-8"></div>
-			</div>
-			</br>
-
-			<button type="button" class="btn btn-info btn-lg" onclick="App.createvps(this, document.getElementById('cloud-init-script-template').innerText)">Deploy!</button>
+		<!-- <h4>Update OpenBazaar</h4> -->
+		<form id="update" method="post" action="http://localhost:8080/api/v1/updateob" onclick="sendpassword()" target="_blank">
+				<input id="update_password" name="password" value="" hidden>
+		    <input type="submit" class="btn btn-info btn-lg" value="Update">
 		</form>
 
-		<br><br>
-		<p id="dasinfo"></p>
-	</div>
+      </div>
 
-	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/mustache.js/2.2.1/mustache.min.js"></script>
+    </div><!-- /.container -->
+    <br>
 
-	<script src="assets/js/bip39.js"></script>
-	<script src="assets/js/digitalocean.js"></script>
-	<script src="assets/js/app.js"></script>
-</body>
+<script>
 
-<script type="text/mustache" id="cloud-init-script-template">
-#cloud-config
-apt_update: true
-runcmd:
-  # Install fail2ban to block SSH brute force attempts
-  - apt-get install -y fail2ban
-  # Install dependencies
-  - apt-get install -y git python2.7 build-essential python-dev libffi-dev libssl-dev
-  # Create openbazaar user and group
-  - groupadd -f openbazaar
-  - useradd --shell /bin/bash --create-home --home /home/openbazaar -g openbazaar --password $(openssl passwd -salt a -1 "{{vps_password}}") openbazaar
-  # Get server repo
-  - git clone https://github.com/OpenBazaar/OpenBazaar-Server.git /home/openbazaar/src
-  # Install virtualenv, create a virtualenv for OB, and install dependencies to it
-  - easy_install pip
-  - pip install virtualenv
-  - virtualenv --python=python2.7 /home/openbazaar/venv
-  - /home/openbazaar/venv/bin/pip install -r /home/openbazaar/src/requirements.txt
-  # Setup firewall. Only let ssh and OB traffic in
-  - ufw disable && ufw enable
-  - ufw default deny incoming
-  - ufw allow 22/tcp
-  - ufw allow 18466/tcp
-  - ufw allow 18469/tcp
-  - ufw allow 18470/tcp
-  - ufw allow 18467/udp
-  # Setup data folder and openbazaar permissions
-  - mkdir -p /home/openbazaar/obdata
-  - chown -R openbazaar:openbazaar /home/openbazaar
-  - chmod -R 760 /home/openbazaar
-  - chmod -R 760 /home/openbazaar/obdata
-  - chmod 640 /home/openbazaar/ob.cfg
-  # Start the service
-  - service openbazaard start
-write_files:
-  # Config file for OB
-  - path: /home/openbazaar/ob.cfg
-    permissions: 0644
-    content: |
-      [CONSTANTS]
-      DATA_FOLDER = /home/openbazaar/obdata
-      TRANSACTION_FEE = 20400
-      RESOLVER = https://resolver.onename.com/
-      [LIBBITCOIN_SERVERS]
-      mainnet_server1 = tcp://libbitcoin1.openbazaar.org:9091
-      mainnet_server3 = tcp://libbitcoin3.openbazaar.org:9091
-      mainnet_server5 = tcp://obelisk.airbitz.co:9091
-      [LIBBITCOIN_SERVERS_TESTNET]
-      testnet_server2 = tcp://libbitcoin2.openbazaar.org:9091,baihZB[vT(dcVCwkhYLAzah<t2gJ>{3@k?+>T&^3
-      testnet_server4 = tcp://libbitcoin4.openbazaar.org:9091,<Z&{.=LJSPySefIKgCu99w.L%b^6VvuVp0+pbnOM
-      [AUTHENTICATION]
-      USERNAME = admin
-      PASSWORD = {{ob_password}}
-      [MAINNET_SEEDS]
-      mainnet_seed2 = seed2.openbazaar.org:8080,8b17082a57d648894a5181cb6e1b8a6f5b3b7e1c347c0671abfcd7deb6f105fe
-      mainnet_seed3 = seed.obcentral.org:8080,f0ff751b27ddaa86a075aa09785c438cd2cebadb8f0f5a7e16f383911322d4ee
-      [TESTNET_SEEDS]
-      testnet_seed1 = seed.openbazaar.org:8080,5b44be5c18ced1bc9400fe5e79c8ab90204f06bebacc04dd9c70a95eaca6e117
-  # Upstart serivce file to keep OB running all all times
-  - path: /etc/init/openbazaard.conf
-    content: |
-      setuid openbazaar
-      setgid openbazaar
-      chdir /home/openbazaar
-      respawn
-      start on runlevel [2345]
-      stop on runlevel [06]
-      exec /home/openbazaar/venv/bin/python /home/openbazaar/src/openbazaard.py start -a 0.0.0.0
+function sendpassword() {
+	var Base64 = {
+    _keyStr: "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=",
+
+    encode: function(input) {
+        var output = "";
+        var chr1, chr2, chr3, enc1, enc2, enc3, enc4;
+        var i = 0;
+
+        input = Base64._utf8_encode(input);
+
+        while (i < input.length) {
+
+            chr1 = input.charCodeAt(i++);
+            chr2 = input.charCodeAt(i++);
+            chr3 = input.charCodeAt(i++);
+
+            enc1 = chr1 >> 2;
+            enc2 = ((chr1 & 3) << 4) | (chr2 >> 4);
+            enc3 = ((chr2 & 15) << 2) | (chr3 >> 6);
+            enc4 = chr3 & 63;
+
+            if (isNaN(chr2)) {
+                enc3 = enc4 = 64;
+            } else if (isNaN(chr3)) {
+                enc4 = 64;
+            }
+
+            output = output + this._keyStr.charAt(enc1) + this._keyStr.charAt(enc2) + this._keyStr.charAt(enc3) + this._keyStr.charAt(enc4);
+
+        }
+
+        return output;
+    },
+
+    _utf8_encode: function(string) {
+        string = string.replace(/\r\n/g, "\n");
+        var utftext = "";
+
+        for (var n = 0; n < string.length; n++) {
+
+            var c = string.charCodeAt(n);
+
+            if (c < 128) {
+                utftext += String.fromCharCode(c);
+            }
+            else if ((c > 127) && (c < 2048)) {
+                utftext += String.fromCharCode((c >> 6) | 192);
+                utftext += String.fromCharCode((c & 63) | 128);
+            }
+            else {
+                utftext += String.fromCharCode((c >> 12) | 224);
+                utftext += String.fromCharCode(((c >> 6) & 63) | 128);
+                utftext += String.fromCharCode((c & 63) | 128);
+            }
+
+        }
+
+        return utftext;
+    },
+	}
+	var sendthis = Base64.encode(document.getElementById('password').value);
+	console.log(sendthis);
+	document.getElementById('test_password').value = sendthis;
+	document.getElementById('runob_password').value = sendthis;
+	document.getElementById('stop_password').value = sendthis;
+	document.getElementById('update_password').value = sendthis;
+
+}
 </script>
+
+</body>
 </html>
