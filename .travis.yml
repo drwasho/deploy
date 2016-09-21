@@ -5,12 +5,13 @@ node_js:
 script:
   - npm install
   - node_modules/gulp/bin/gulp.js clean && node_modules/gulp/bin/gulp.js build
-before_deploy:
-  - export TRAVIS_BUILD_DIR="$TRAVIS_BUILD_DIR/build"
 deploy:
   provider: releases
   api_key:
     secure: gJ1p32NIh9wFggGHfaoU2dVAEo3pO8mxYvXAE6vfElIdmEEi9MLCgdm/XRVlDrPj7nPyXSQRYK2jWOtD7F/r5Or2yRVqR55RXfu9jrQIxV/k+RyDW7rwewFohdHrlfQC+Og3CIhqHDec03Q3VGZQAvTOzM2aZsBTOu3bmlxO89ii5jKwoZ92ueMLXgKFVDi52jfFZND7e0wXvTtHtHaawj6OcxIIOYBXQ8tE6psScBcqLGXC+PvKtaRoHcqjbjZNoITlqgtREEjz+xyVGVjn1is3ib0mpvCRJ7aylthit4PPfVOAzmJsR7zoJMu22pXcWKo/mKOyr/0/FKVWBTuWB1IhKYkNaznqEquCTc5wgi5ozE3LkWTxUJ4MFvbemQLVKw39VEHxmYFVl5UYz52jn8NBFCIoMzCCBd520nM/GZhLbHoUnwEtaJjg7t6wrVcXZ3Uo87ROuDrPVrDoSRNwSn2oekJpxwALuyOYo1kTl/wM97QTG+VL5H+r5PL4eUVcswtt4B/fbAS7BMvVCoTRBsmoURhGeJVnTJkprYxaJzH6Iq9Pb1E84msUW68qTR2BhGKouqxU65k2J8sYhgD/VL6HYtuLVh/lViykwYIfPU7Z5y8EG8YbwFowXAsmbTwGtekMFJL3incgl2JnVNOO+oynSDvZpDkMFBbDuRGSq2g=
+  file_glob: true
+  file: "build/*"
+  skip_cleanup: true
   on:
     tags: true
 env:
