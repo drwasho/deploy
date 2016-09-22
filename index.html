@@ -155,10 +155,6 @@ apt-get install -y git nodejs
 # Generate SSL cert
 mkdir -p /home/openbazaar/ssl
 openssl req -nodes -batch -x509 -newkey rsa:2048 -keyout /home/openbazaar/ssl/easybazaar.key -out /home/openbazaar/ssl/easybazaar.crt
-chown openbazaar:openbazaar /home/openbazaar/ssl
-chmod 700 /home/openbazaar/ssl
-chmod 600 /home/openbazaar/ssl/easybazaar.key
-chmod 600 /home/openbazaar/ssl/easybazaar.crt
 
 # Install ob-relay
 git clone https://github.com/OB1Company/ob-relay.git /home/openbazaar/ob-relay
