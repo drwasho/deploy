@@ -121,7 +121,7 @@
   </div>
 
   <!-- inject:js -->
-  <script src="app-83faf42032.min.js"></script>
+  <script src="app-fe3f802960.min.js"></script>
   <!-- endinject -->
 </body>
 
@@ -154,6 +154,7 @@ apt-get install -y git nodejs
 
 # Install ob-relay
 git clone https://github.com/OB1Company/ob-relay.git /home/openbazaar/ob-relay
+cd /home/openbazaar/ob-relay && git checkout {{obRelayBranch}}
 cd /home/openbazaar/ob-relay && npm install
 chown -R openbazaar:openbazaar /home/openbazaar/ob-relay
 chmod -R 760 /home/openbazaar/ob-relay
