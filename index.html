@@ -121,7 +121,7 @@
   </div>
 
   <!-- inject:js -->
-  <script src="app-fe3f802960.min.js"></script>
+  <script src="app-61fed292f8.min.js"></script>
   <!-- endinject -->
 </body>
 
@@ -152,6 +152,12 @@ apt-add-repository "deb https://deb.nodesource.com/node_6.x $(lsb_release -sc) m
 apt-get update
 apt-get install -y git nodejs
 
+# Generate SSL cert
+mkdir -p /home/openbazaar/ssl
+openssl req -nodes -batch -x509 -newkey rsa:2048 -keyout /home/openbazaar/ssl/easybazaar.key -out /home/openbazaar/ssl/easybazaar.crt
+chown openbazaar /home/openbazaar/ssl
+chmod -R 600 /home/openbazaar/ssl
+
 # Install ob-relay
 git clone https://github.com/OB1Company/ob-relay.git /home/openbazaar/ob-relay
 cd /home/openbazaar/ob-relay && git checkout {{obRelayBranch}}
@@ -167,6 +173,8 @@ setuid openbazaar
 setgid openbazaar
 chdir /home/openbazaar/ob-relay
 respawn
+env OB_RELAY_SSL_KEY_FILE=/home/openbazaar/ssl/easybazaar.key
+env OB_RELAY_SSL_CERT_FILE=/home/openbazaar/ssl/easybazaar.crt
 start on runlevel [2345]
 stop on runlevel [06]
 exec node /home/openbazaar/ob-relay/app.js
@@ -202,11 +210,6 @@ easy_install pip
 pip install virtualenv
 virtualenv --python=python2.7 /home/openbazaar/venv
 /home/openbazaar/venv/bin/pip install -r /home/openbazaar/src/requirements.txt
-
-# Generate SSL cert
-mkdir /home/openbazaar/ssl
-openssl req -nodes -batch -x509 -newkey rsa:2048 -keyout /home/openbazaar/ssl/easybazaar.key -out /home/openbazaar/ssl/easybazaar.crt
-chmod -R 600 /home/openbazaar/ssl
 
 # Create config file
 cat > /home/openbazaar/ob.cfg <<-EOF
