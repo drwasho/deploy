@@ -9,7 +9,7 @@
   <link rel="icon" type="image/png" href="images/favicon.png" />
 
   
-  <link rel="stylesheet" href="css/style-13298d87c4.min.css">
+  <link rel="stylesheet" href="css/style-853a82fc29.min.css">
   <!-- endinject -->
 </head>
 
@@ -27,7 +27,7 @@
 
     <!-- Register -->
     <div v-show="!node.stateHasStarted(nodeStates.CREATING_DROPLET)" class="register marginTop30">
-      <div class="step ">
+      <div class="step">
         <div class="label">Step 1:</div>
         <a href="https://www.digitalocean.com/?refcode=eaa306f7dd3d&utm_campaign=Referral_Invite&utm_medium=Referral_Program&utm_source=CopyPaste" target="_blank"><div class="button">Sign-up for Digital Ocean</div></a>
         <div class="small center">Includes $10 worth of credits</div>
@@ -42,10 +42,10 @@
       </div>
 
       <div class="step clear marginTop15">
-        <div class="label">Step 3:</div>
+        <div class="label">Step 3: <span class="link" onclick="showAnswer(1)" style="color:#fff">See how</span></div>
         <input v-model="apiKey" type="text" class="token floatLeft" placeholder="Paste your Digital Ocean API token" />
-        <div v-on:click="createvps" class="buttonDeploy floatLeft js-deployNode">
-          <span class="text">Deploy</span>
+        <div v-on:click="createvps" class="buttonDeploy floatLeft">
+          <span class="text">Deploy!</span>
           <span class="rocket hide"><img src="images/rocket.png" style="height: 25px; width: 23px; position: relative; top: 7px; left: 0;" /></span>
         </div>
         <div class="clear"></div>
@@ -66,15 +66,15 @@
     <div v-show="node.stateHasStarted(nodeStates.CREATING_DROPLET) && !node.stateHasStarted(nodeStates.READY)" class="deploying">
       <div class="terminal">
         <div id="terminalContent">
-          <div v-show="node.stateHasStarted(nodeStates.CREATING_DROPLET)">Setting up <strong>Digital Ocean droplet</strong>...</div>
+          <div v-show="node.stateHasStarted(nodeStates.CREATING_DROPLET)">Setting up <strong>Digital Ocean droplet</strong> (takes 30 seconds)...</div>
           <div v-show="node.stateHasFinished(nodeStates.CREATING_DROPLET)"><strong>droplet</strong> setup success</div>
           <br/>
-          <div v-show="node.stateHasStarted(nodeStates.INSTALLING_OPENBAZAAR_RELAY)">Installing <strong>OpenBazaar Relay</strong></div>
+          <div v-show="node.stateHasStarted(nodeStates.INSTALLING_OPENBAZAAR_RELAY)">Installing <strong>OpenBazaar Relay</strong> (takes 1 minute)...</div>
           <div v-show="node.stateHasStarted(nodeStates.STARTING_OPENBAZAAR_RELAY)">Starting <strong>OpenBazaar Relay</strong></div>
           <br/>
-          <div v-show="node.stateHasStarted(nodeStates.INSTALLING_SYSTEM_PACKAGES)">Installing <strong>system packages</strong></div>
+          <div v-show="node.stateHasStarted(nodeStates.INSTALLING_SYSTEM_PACKAGES)">Installing <strong>system packages</strong> (takes 1 minute)...</div>
           <br/>
-          <div v-show="node.stateHasStarted(nodeStates.INSTALLING_OPENBAZAAR_SERVER)">Installing <strong>OpenBazaar Server</strong></div>
+          <div v-show="node.stateHasStarted(nodeStates.INSTALLING_OPENBAZAAR_SERVER)">Installing <strong>OpenBazaar Server</strong> (takes 2 minutes)...</div>
           <div v-show="node.stateHasStarted(nodeStates.STARTING_OPENBAZAAR_SERVER)">Starting <strong>OpenBazaar Server</strong></div>
         </div>
         <span class="blinking-cursor">|</span>
@@ -84,7 +84,7 @@
     <!-- Node finished -->
     <div v-show="node.stateHasStarted(nodeStates.READY)" class="finished marginTop30">
       <div class="connection marginRight10">
-        <div class="title">Connect to OpenBazaar <span class="link">See how</span></div>
+        <div class="title">Connect to OpenBazaar <span class="link" onclick="showAnswer(2)">See how</span></div>
         <div class="details">
           <table cellspacing="4px">
             <tr>
@@ -104,7 +104,7 @@
       </div>
 
       <div class="connection">
-        <div class="title">Connect to SSH <span class="link">See how</span></div>
+        <div class="title">Connect to SSH <span class="link" onclick="showAnswer(3)">See how</span></div>
         <div class="details">
           <table>
             <tr>
@@ -119,7 +119,21 @@
               <td class="right vMiddle paddingTop2">Password</td>
               <td><textarea>{{node.vpsUser.password}}</textarea></td>
             </tr>
+            <tr>
+              <td class="right vMiddle paddingTop2">SSL</td>
+              <td><input type="text" disabled value="On" /></td>
+            </tr>
           </table>
+        </div>
+      </div>
+
+      <div class="clear"></div>
+
+      <div class="marginTop10">
+        <div class="buttonSmall floatLeft">Save Your Credentials!</div>
+        <div class="finishedButtons">
+          <a href="https://openbazaar.org/download.html" target="_blank"><div class="buttonSmallDark floatLeft">Download OpenBazaar</div></a>
+          <div class="buttonSmallDark floatLeft" style="margin: 0">Deploy Another Node</div>
         </div>
       </div>
     </div>
@@ -129,16 +143,48 @@
     <!-- FAQs  -->
     <div class="faq">
       <div class="label">FAQ</div>
-      <div class="question">How do I connect my node to the OpenBazaar Client?</div>
-      <div class="question">How do I connect my node via SSH?</div>
-      <div class="question">How do I deactivate a node I deployed?</div>
-      <div class="question">How much does it cost to host the node?</div>
+      <div class="question" id="q1" onclick="showAnswer(1)">
+        Where do I find my Digital Ocean token?
+        <div class="answer hide" id="a1"><img src="images/token_instructions.gif" style="width: 100%" /></div>
+      </div>
+      <div class="question" id="q2" onclick="showAnswer(2)">
+        How do I connect my node to the OpenBazaar Client?
+        <div class="answer hide" id="a2"><img src="images/connect.gif" style="width: 100%" /></div>
+      </div>
+      <div class="question" id="q3" onclick="showAnswer(3)">
+        How do I connect my node via SSH?
+        <div class="answer hide" id="a3">Waiting on gif...</div>
+      </div>
+      <div class="question" id="q4" onclick="showAnswer(4)">
+        How do I deactivate a node I deployed?
+        <div class="answer hide" id="a4">Waiting on gif...</div>
+      </div>
+      <div class="question" id="q5" onclick="showAnswer(5)">
+        How much does it cost to host the node?
+        <div class="answer hide" id="a5">Some text goes here...</div>
+      </div>
     </div>
   </div>
 
-<!-- Inject installation script -->
+<script type="text/javascript">
+  function showAnswer(num) {
+    // reset all answers to hidden
+    document.getElementById("a1").className = "answer hide";
+    document.getElementById("a2").className = "answer hide";
+    document.getElementById("a3").className = "answer hide";
+    document.getElementById("a4").className = "answer hide";
+    document.getElementById("a5").className = "answer hide";
+
+    // show the clicked answers
+    document.getElementById("a" + num).className = "answer";
+
+    // scroll to the answer
+    document.getElementById('a' + num).scrollIntoView();
+  }
+</script>
+
+<!-- Installation script. -->
 <script type="text/sh" id="cloud-init-script-template">#!/bin/bash
-set -e
 
 ##
 ## Install OpenBazaar and ob-relay. The goal is to install ob-relay as
@@ -149,20 +195,20 @@ set -e
 # Set state writes a string to a file that ob-relay can use to determine progress
 mkdir -p /home/openbazaar/.deploy
 function setState {
-  echo -n $1 > /home/openbazaar/.deploy/state
+echo -n $1 > /home/openbazaar/.deploy/state
 }
 
 setState INSTALLING_OPENBAZAAR_RELAY
 
 # Create openbazaar user and group
 groupadd -f openbazaar
-useradd --shell /bin/bash --create-home --home /home/openbazaar -g openbazaar --password "$(openssl passwd -salt a -1 "{{vpsPassword}}")" openbazaar
+useradd --shell /bin/bash --create-home --home /home/openbazaar -g openbazaar --password $(openssl passwd -salt a -1 "{{vpsPassword}}") openbazaar
 
 # Generate SSL cert
 mkdir /home/openbazaar/ssl
 openssl req -nodes -batch -x509 -newkey rsa:2048 -keyout /home/openbazaar/ssl/deploy.key -out /home/openbazaar/ssl/deploy.crt
 chown -R openbazaar:openbazaar /home/openbazaar/ssl
-chmod -R 770 /home/openbazaar/ssl
+chmod -R 760 /home/openbazaar/ssl
 
 # Install git and nodejs
 apt-key adv --keyserver keyserver.ubuntu.com --recv 68576280
@@ -172,7 +218,7 @@ apt-get install -y git nodejs
 
 # Install ob-relay
 git clone https://github.com/OB1Company/ob-relay.git /home/openbazaar/ob-relay
-cd /home/openbazaar/ob-relay && git checkout "{{obRelayBranch}}"
+cd /home/openbazaar/ob-relay && git checkout {{obRelayBranch}}
 cd /home/openbazaar/ob-relay && npm install
 chown -R openbazaar:openbazaar /home/openbazaar/ob-relay
 chmod -R 760 /home/openbazaar/ob-relay
@@ -274,8 +320,8 @@ service openbazaard start
 setState READY
 </script>
 
-  
-  <script src="app-a8a7f2f443.min.js"></script>
-  <!-- endinject -->
+
+<script src="js/app-b5561a210d.min.js"></script>
+<!-- endinject -->
 </body>
 </html>
