@@ -1,15 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <title>OB1 Deploy 🚀</title>
+  <title>OB1 Deploy 🚀🎪</title>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="description" content="Deploy an OpenBazaar node to Digital Ocean in a few clicks">
   <link rel="icon" type="image/png" href="images/favicon.png" />
 
-  <!-- inject:css -->
-  <link rel="stylesheet" href="style-d5612adcdc.min.css">
+  
+  <link rel="stylesheet" href="style-13298d87c4.min.css">
   <!-- endinject -->
 </head>
 
@@ -44,26 +44,26 @@
       <div class="step clear marginTop15">
         <div class="label">Step 3:</div>
         <input v-model="apiKey" type="text" class="token floatLeft" placeholder="Paste your Digital Ocean API token" />
-        <div v-on:click="createvps" class="buttonDeploy floatLeft">
+        <div v-on:click="createvps" class="buttonDeploy floatLeft js-deployNode">
           <span class="text">Deploy</span>
           <span class="rocket hide"><img src="images/rocket.png" style="height: 25px; width: 23px; position: relative; top: 7px; left: 0;" /></span>
         </div>
         <div class="clear"></div>
-        <div class="small">e.g. 025370df16b30b5a6ddd40236817f78fcf4b02c1403524905bab790aaa60a543</div>
+        <div class="small mobileHidden">e.g. 025370df16b30b5a6ddd40236817f78fcf4b02c1403524905bab790aaa60a543</div>
       </div>
     </div>
 
     <!-- Progress bar -->
-    <div v-show="node.stateHasStarted(nodeStates.CREATING_DROPLET) && !node.stateHasStarted(nodeStates.READY)" class="progressBar">
-      <div v-bind:class="node.styleOptions(nodeStates.CREATING_DROPLET)">1. Droplet</div>
-      <div v-bind:class="node.styleOptions(nodeStates.INSTALLING_OPENBAZAAR_RELAY, nodeStates.STARTING_OPENBAZAAR_RELAY)">2. Relay</div>
-      <div v-bind:class="node.styleOptions(nodeStates.INSTALLING_SYSTEM_PACKAGES)">3. Packages</div>
-      <div v-bind:class="node.styleOptions(nodeStates.INSTALLING_OPENBAZAAR_SERVER, nodeStates.STARTING_OPENBAZAAR_SERVER)">4. Server</div>
+    <div v-show="node.stateHasStarted(nodeStates.CREATING_DROPLET) && !node.stateHasStarted(nodeStates.READY)" class="progressBar marginTop30">
+      <div v-bind:class="node.styleOptions(nodeStates.CREATING_DROPLET)">1<span class="mobileHidden">. Droplet</span></div>
+      <div v-bind:class="node.styleOptions(nodeStates.INSTALLING_OPENBAZAAR_RELAY, nodeStates.STARTING_OPENBAZAAR_RELAY)">2<span class="mobileHidden">. Relay</span></div>
+      <div v-bind:class="node.styleOptions(nodeStates.INSTALLING_SYSTEM_PACKAGES)">3<span class="mobileHidden">. Packages</span></div>
+      <div v-bind:class="node.styleOptions(nodeStates.INSTALLING_OPENBAZAAR_SERVER, nodeStates.STARTING_OPENBAZAAR_SERVER)">4<span class="mobileHidden">. Server</span></div>
       <div v-bind:class="node.styleOptions(nodeStates.READY)">READY!</div>
     </div>
 
     <!-- Deploying -->
-    <div v-show="node.stateHasStarted(nodeStates.CREATING_DROPLET) && !node.stateHasStarted(nodeStates.READY)" class="deploying marginTop30">
+    <div v-show="node.stateHasStarted(nodeStates.CREATING_DROPLET) && !node.stateHasStarted(nodeStates.READY)" class="deploying">
       <div class="terminal">
         <div id="terminalContent">
           <div v-show="node.stateHasStarted(nodeStates.CREATING_DROPLET)">Setting up <strong>Digital Ocean droplet</strong>...</div>
@@ -84,7 +84,7 @@
     <!-- Node finished -->
     <div v-show="node.stateHasStarted(nodeStates.READY)" class="finished marginTop30">
       <div class="connection marginRight10">
-        <div class="title">Connect to OpenBazaar</div>
+        <div class="title">Connect to OpenBazaar <span class="link">See how</span></div>
         <div class="details">
           <table cellspacing="4px">
             <tr>
@@ -96,7 +96,7 @@
               <td><input type="text" disabled v-model="node.obUser.name"/></td>
             </tr>
             <tr>
-              <td class="right vTop paddingTop2">Password</td>
+              <td class="right vMiddle paddingTop2">Password</td>
               <td><textarea>{{node.obUser.password}}</textarea></td>
             </tr>
           </table>
@@ -104,7 +104,7 @@
       </div>
 
       <div class="connection">
-        <div class="title">Connect to SSH</div>
+        <div class="title">Connect to SSH <span class="link">See how</span></div>
         <div class="details">
           <table>
             <tr>
@@ -130,13 +130,15 @@
     <div class="faq">
       <div class="label">FAQ</div>
       <div class="question">How do I connect my node to the OpenBazaar Client?</div>
+      <div class="question">How do I connect my node via SSH?</div>
       <div class="question">How do I deactivate a node I deployed?</div>
       <div class="question">How much does it cost to host the node?</div>
     </div>
   </div>
 
-<!-- Installation script. It must not have a newline before the shebang -->
+<!-- Inject installation script -->
 <script type="text/sh" id="cloud-init-script-template">#!/bin/bash
+set -e
 
 ##
 ## Install OpenBazaar and ob-relay. The goal is to install ob-relay as
@@ -154,13 +156,13 @@ setState INSTALLING_OPENBAZAAR_RELAY
 
 # Create openbazaar user and group
 groupadd -f openbazaar
-useradd --shell /bin/bash --create-home --home /home/openbazaar -g openbazaar --password $(openssl passwd -salt a -1 "{{vpsPassword}}") openbazaar
+useradd --shell /bin/bash --create-home --home /home/openbazaar -g openbazaar --password "$(openssl passwd -salt a -1 "{{vpsPassword}}")" openbazaar
 
 # Generate SSL cert
 mkdir /home/openbazaar/ssl
 openssl req -nodes -batch -x509 -newkey rsa:2048 -keyout /home/openbazaar/ssl/deploy.key -out /home/openbazaar/ssl/deploy.crt
 chown -R openbazaar:openbazaar /home/openbazaar/ssl
-chmod -R 760 /home/openbazaar/ssl
+chmod -R 770 /home/openbazaar/ssl
 
 # Install git and nodejs
 apt-key adv --keyserver keyserver.ubuntu.com --recv 68576280
@@ -170,7 +172,7 @@ apt-get install -y git nodejs
 
 # Install ob-relay
 git clone https://github.com/OB1Company/ob-relay.git /home/openbazaar/ob-relay
-cd /home/openbazaar/ob-relay && git checkout {{obRelayBranch}}
+cd /home/openbazaar/ob-relay && git checkout "{{obRelayBranch}}"
 cd /home/openbazaar/ob-relay && npm install
 chown -R openbazaar:openbazaar /home/openbazaar/ob-relay
 chmod -R 760 /home/openbazaar/ob-relay
@@ -272,8 +274,8 @@ service openbazaard start
 setState READY
 </script>
 
-<!-- inject:js -->
-<script src="app-214939f859.min.js"></script>
-<!-- endinject -->
+  
+  <script src="app-a8a7f2f443.min.js"></script>
+  <!-- endinject -->
 </body>
 </html>
