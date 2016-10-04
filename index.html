@@ -8,8 +8,8 @@
   <meta name="description" content="Deploy an OpenBazaar node to Digital Ocean in a few clicks">
   <link rel="icon" type="image/png" href="images/favicon.png" />
 
-  
-  <link rel="stylesheet" href="css/style-853a82fc29.min.css">
+  <!-- inject:css -->
+  <link rel="stylesheet" href="style-853a82fc29.min.css">
   <!-- endinject -->
 </head>
 
@@ -126,7 +126,7 @@
           </table>
         </div>
       </div>
-
+      
       <div class="clear"></div>
 
       <div class="marginTop10">
@@ -168,7 +168,7 @@
 
 <script type="text/javascript">
   function showAnswer(num) {
-    // reset all answers to hidden
+    // reset all answers to hidden 
     document.getElementById("a1").className = "answer hide";
     document.getElementById("a2").className = "answer hide";
     document.getElementById("a3").className = "answer hide";
@@ -183,7 +183,7 @@
   }
 </script>
 
-<!-- Installation script. -->
+<!-- Installation script. It must not have a newline before the shebang -->
 <script type="text/sh" id="cloud-init-script-template">#!/bin/bash
 
 ##
@@ -195,7 +195,7 @@
 # Set state writes a string to a file that ob-relay can use to determine progress
 mkdir -p /home/openbazaar/.deploy
 function setState {
-echo -n $1 > /home/openbazaar/.deploy/state
+  echo -n $1 > /home/openbazaar/.deploy/state
 }
 
 setState INSTALLING_OPENBAZAAR_RELAY
@@ -320,8 +320,8 @@ service openbazaard start
 setState READY
 </script>
 
-
-<script src="js/app-b5561a210d.min.js"></script>
+<!-- inject:js -->
+<script src="app-fe8cb0f9f6.min.js"></script>
 <!-- endinject -->
 </body>
 </html>
