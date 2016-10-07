@@ -4,7 +4,7 @@ node_js:
   - "6.3"
 script:
   - npm install
-  - gulp=node_modules/gulp/bin/gulp.js && gulp clean && gulp build
+  - gulp=node_modules/gulp/bin/gulp.js && gulp clean && gulp build && gulp deploy:gh
   - (cd build && tar -zcf ../build.tar.gz ./*)
   - (cd build && zip -r ../build.zip ./*)
 deploy:
