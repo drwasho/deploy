@@ -8,7 +8,7 @@ env:
 before_install:
   - openssl aes-256-cbc -K $encrypted_778b32cd91e6_key -iv $encrypted_778b32cd91e6_iv -in deploy_gh_pages.enc -out deploy_gh_pages -d
   - chmod 600 deploy_gh_pages
-  - eval `ssh-agent -s
+  - eval `ssh-agent -s`
   - ssh-add deploy_gh_pages
 script:
   - npm install
