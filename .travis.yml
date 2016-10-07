@@ -2,6 +2,14 @@ language: node_js
 sudo: false
 node_js:
   - "6.3"
+env:
+  global:
+    - GULP: node_modules/gulp/bin/gulp.js
+before_install:
+  - openssl aes-256-cbc -K $encrypted_778b32cd91e6_key -iv $encrypted_778b32cd91e6_iv -in deploy_gh_pages.enc -out deploy_gh_pages -d
+  - chmod 600 deploy_gh_pages
+  - eval `ssh-agent -s
+  - ssh-add deploy_gh_pages
 script:
   - npm install
   - $GULP clean && $GULP build
@@ -21,10 +29,3 @@ deploy:
   skip_cleanup: true
   on:
     tags: true
-env:
-  global:
-   - GULP: node_modules/gulp/bin/gulp.js
-before_install:
-  - openssl aes-256-cbc -K $encrypted_778b32cd91e6_key -iv $encrypted_778b32cd91e6_iv -in deploy_gh_pages.enc -out deploy_gh_pages -d
-  - chmod 600 deploy_gh_pages
-  - ssh-add deploy_gh_pages
