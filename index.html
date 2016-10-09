@@ -149,10 +149,10 @@
       <div class="clear"></div>
 
       <div class="marginTop10">
-        <div class="buttonSmall floatLeft">Save Your Credentials!</div>
+        <div v-on:click="downloadCredentialsFile" class="buttonSmall floatLeft">Save Your Credentials!</div>
         <div class="finishedButtons">
           <a href="https://openbazaar.org/download.html" target="_blank"><div class="buttonSmallDark floatLeft">Download OpenBazaar</div></a>
-          <div class="buttonSmallDark floatLeft" style="margin: 0">Deploy Another Node</div>
+          <div v-on:click="deployNewNode" class="buttonSmallDark floatLeft" style="margin: 0">Deploy Another Node</div>
         </div>
       </div>
     </div>
@@ -237,34 +237,6 @@ openssl req -nodes -batch -x509 -newkey rsa:2048 -keyout /home/openbazaar/ssl/de
 chown -R openbazaar:openbazaar /home/openbazaar
 chmod -R 760 /home/openbazaar/ssl
 
-# Create update scripts
-cat > /usr/local/bin/checkout_latest_git_tag <<-EOF
-	#!/bin/sh
-	cd $1
-	git fetch origin
-	git checkout --force $(git tag | grep -P "^v\d+\.\d+\.\d+$" | sort -V | tail -1)
-	EOF
-
-cat > /usr/local/bin/checkout_latest_openbazaard <<-EOF
-	#!/bin/sh
-	checkout_latest_git_tag /home/openbazaar/src
-	/home/openbazaar/venv/bin/pip install -r /home/openbazaar/src/requirements.txt
-	sudo service openbazaard restart
-	EOF
-
-cat > /usr/local/bin/checkout_latest_ob_relay <<-EOF
-	#!/bin/sh
-	checkout_latest_git_tag /home/openbazaar/ob-relay
-	cd /home/openbazaar/ob-relay && npm install
-	sudo service ob-relay restart
-	EOF
-
-chmod +x /usr/local/bin/checkout_latest_git_tag
-chmod +x /usr/local/bin/checkout_latest_openbazaard
-chmod +x /usr/local/bin/checkout_latest_ob_relay
-chown openbazaar:openbazaar /usr/local/bin/checkout_latest_*
-chmod 770 /usr/local/bin/checkout_latest_*
-
 # Install git and nodejs
 apt-key adv --keyserver keyserver.ubuntu.com --recv 68576280
 apt-add-repository "deb https://deb.nodesource.com/node_6.x $(lsb_release -sc) main"
@@ -273,7 +245,8 @@ apt-get install -y git nodejs
 
 # Install ob-relay
 git clone https://github.com/OB1Company/ob-relay.git /home/openbazaar/ob-relay
-checkout_latest_ob_relay
+cd /home/openbazaar/ob-relay && git checkout "{{obRelayBranch}}"
+cd /home/openbazaar/ob-relay && npm install
 chown -R openbazaar:openbazaar /home/openbazaar/ob-relay
 chmod -R 760 /home/openbazaar/ob-relay
 
@@ -281,16 +254,16 @@ setState STARTING_OPENBAZAAR_RELAY
 
 # Create Upstart script for ob-relay
 cat > /etc/init/ob-relay.conf <<-EOF
-	setuid openbazaar
-	setgid openbazaar
-	chdir /home/openbazaar/ob-relay
-	respawn
-	start on runlevel [2345]
-	stop on runlevel [06]
-	env OB_RELAY_SSL_KEY_FILE="/home/openbazaar/ssl/deploy.key"
-	env OB_RELAY_SSL_CERT_FILE="/home/openbazaar/ssl/deploy.crt"
-	exec node app.js >> /home/openbazaar/logs/ob-relay.log
-	EOF
+setuid openbazaar
+setgid openbazaar
+chdir /home/openbazaar/ob-relay
+respawn
+start on runlevel [2345]
+stop on runlevel [06]
+env OB_RELAY_SSL_KEY_FILE="/home/openbazaar/ssl/deploy.key"
+env OB_RELAY_SSL_CERT_FILE="/home/openbazaar/ssl/deploy.crt"
+exec node /home/openbazaar/ob-relay/app.js >> /home/openbazaar/logs/ob-relay.log
+EOF
 
 # Start ob-relay
 service ob-relay start
@@ -321,33 +294,33 @@ git clone https://github.com/OpenBazaar/OpenBazaar-Server.git /home/openbazaar/s
 easy_install pip
 pip install virtualenv
 virtualenv --python=python2.7 /home/openbazaar/venv
-checkout_latest_openbazaard
+/home/openbazaar/venv/bin/pip install -r /home/openbazaar/src/requirements.txt
 
 # Create config file
 cat > /home/openbazaar/ob.cfg <<-EOF
-	[CONSTANTS]
-	DATA_FOLDER = /home/openbazaar/data/
-	TRANSACTION_FEE = 20400
-	RESOLVER = https://resolver.onename.com/
-	[LIBBITCOIN_SERVERS]
-	mainnet_server1 = tcp://libbitcoin1.openbazaar.org:9091
-	mainnet_server3 = tcp://libbitcoin3.openbazaar.org:9091
-	mainnet_server5 = tcp://obelisk.airbitz.co:9091
-	[LIBBITCOIN_SERVERS_TESTNET]
-	testnet_server2 = tcp://libbitcoin2.openbazaar.org:9091,baihZB[vT(dcVCwkhYLAzah<t2gJ>{3@k?+>T&^3
-	testnet_server4 = tcp://libbitcoin4.openbazaar.org:9091,<Z&{.=LJSPySefIKgCu99w.L%b^6VvuVp0+pbnOM
-	[AUTHENTICATION]
-	SSL = True
-	SSL_CERT = /home/openbazaar/ssl/deploy.crt
-	SSL_KEY = /home/openbazaar/ssl/deploy.key
-	USERNAME = admin
-	PASSWORD = {{obPassword}}
-	[MAINNET_SEEDS]
-	mainnet_seed2 = seed2.openbazaar.org:8080,8b17082a57d648894a5181cb6e1b8a6f5b3b7e1c347c0671abfcd7deb6f105fe
-	mainnet_seed3 = seed.obcentral.org:8080,f0ff751b27ddaa86a075aa09785c438cd2cebadb8f0f5a7e16f383911322d4ee
-	[TESTNET_SEEDS]
-	testnet_seed1 = seed.openbazaar.org:8080,5b44be5c18ced1bc9400fe5e79c8ab90204f06bebacc04dd9c70a95eaca6e117
-	EOF
+[CONSTANTS]
+DATA_FOLDER = /home/openbazaar/data/
+TRANSACTION_FEE = 20400
+RESOLVER = https://resolver.onename.com/
+[LIBBITCOIN_SERVERS]
+mainnet_server1 = tcp://libbitcoin1.openbazaar.org:9091
+mainnet_server3 = tcp://libbitcoin3.openbazaar.org:9091
+mainnet_server5 = tcp://obelisk.airbitz.co:9091
+[LIBBITCOIN_SERVERS_TESTNET]
+testnet_server2 = tcp://libbitcoin2.openbazaar.org:9091,baihZB[vT(dcVCwkhYLAzah<t2gJ>{3@k?+>T&^3
+testnet_server4 = tcp://libbitcoin4.openbazaar.org:9091,<Z&{.=LJSPySefIKgCu99w.L%b^6VvuVp0+pbnOM
+[AUTHENTICATION]
+SSL = True
+SSL_CERT = /home/openbazaar/ssl/deploy.crt
+SSL_KEY = /home/openbazaar/ssl/deploy.key
+USERNAME = admin
+PASSWORD = {{obPassword}}
+[MAINNET_SEEDS]
+mainnet_seed2 = seed2.openbazaar.org:8080,8b17082a57d648894a5181cb6e1b8a6f5b3b7e1c347c0671abfcd7deb6f105fe
+mainnet_seed3 = seed.obcentral.org:8080,f0ff751b27ddaa86a075aa09785c438cd2cebadb8f0f5a7e16f383911322d4ee
+[TESTNET_SEEDS]
+testnet_seed1 = seed.openbazaar.org:8080,5b44be5c18ced1bc9400fe5e79c8ab90204f06bebacc04dd9c70a95eaca6e117
+EOF
 
 # Setup data directory and permissions
 mkdir -p /home/openbazaar/data
@@ -359,14 +332,14 @@ setState STARTING_OPENBAZAAR_SERVER
 
 # Create Upstart script for OpenBazaar-Server
 cat > /etc/init/openbazaard.conf <<-EOF
-	setuid openbazaar
-	setgid openbazaar
-	chdir /home/openbazaar
-	respawn
-	start on runlevel [2345]
-	stop on runlevel [06]
-	exec venv/bin/python ./src/openbazaard.py start -a 0.0.0.0 >> ./logs/openbazaard.log
-	EOF
+setuid openbazaar
+setgid openbazaar
+chdir /home/openbazaar
+respawn
+start on runlevel [2345]
+stop on runlevel [06]
+exec /home/openbazaar/venv/bin/python /home/openbazaar/src/openbazaard.py start -a 0.0.0.0 >> /home/openbazaar/logs/openbazaard.log
+EOF
 
 # Start OpenBazaar-Server
 service openbazaard start
@@ -375,7 +348,7 @@ setState READY
 </script>
 
 
-<script src="js/app-7a07c8a2b6.min.js"></script>
+<script src="js/app-1e3ea4bcec.min.js"></script>
 <!-- endinject -->
 </body>
 </html>
